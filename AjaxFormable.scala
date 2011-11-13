@@ -130,37 +130,37 @@ trait AjaxFormableMeta[T <: Record[T]
 		@button: value the submit button should display
 		@success: function that should return what the browser should do on success
 	*/
-    def ajaxCreationForm(button: Box[String])(success: T => JsCmd): NodeSeq = {
+	def ajaxCreationForm(button: Box[String])(success: T => JsCmd): NodeSeq = {
 		val obj = createRecord
 		val formId = Helpers.nextFuncName		//randomly generated
 
 		/*
 			Js command that clears the ajax form's html fields.
 		*/
-        def clearForm(obj: T): JsCmd = {
-            (obj.extraFormFields ++ obj.formFields) match {
-                case Nil => Noop		//if there are no fields
-                case first :: rest => extraClearCreationForm & JsRaw(String.format("""
-                    $('#%s').find(':input').each(function() {
-                        switch(this.type) {
-                            case 'password':
-                            case 'select-multiple':
-                            case 'select-one':
-                            case 'text':
-                            case 'textarea':
-                                $(this).val("");
-                                break;
-                            case 'checkbox':
-                            case 'radio':
-                                this.checked = false;
-                                break;
-                            case 'file':
-                            	$(this).show();
-                        }
-                    })""", formId)
-                )
-            }
-        }
+		def clearForm(obj: T): JsCmd = {
+			(obj.extraFormFields ++ obj.formFields) match {
+				case Nil => Noop		//if there are no fields
+				case first :: rest => extraClearCreationForm & JsRaw(String.format("""
+					$('#%s').find(':input').each(function() {
+						switch(this.type) {
+							case 'password':
+							case 'select-multiple':
+							case 'select-one':
+							case 'text':
+							case 'textarea':
+								$(this).val("");
+								break;
+							case 'checkbox':
+							case 'radio':
+								this.checked = false;
+								break;
+							case 'file':
+								$(this).show();
+						}
+					})""", formId)
+				)
+			}
+		}
 		
 		/* Ajax Form Html */
 		<div id={formId}>{
@@ -178,20 +178,20 @@ trait AjaxFormableMeta[T <: Record[T]
 	/*
 		Return a new model with only the model's form fields copied
 	*/
-    private def copyObject(obj: T): T = {
-    	val newRecord = createRecord
+	private def copyObject(obj: T): T = {
+		val newRecord = createRecord
     	
-    	val objJValue: JObject = obj.asJValue	//convert the object to JSON format
+		val objJValue: JObject = obj.asJValue	//convert the object to JSON format
     	
 		//get only the fields in formFields and hiddenFields
-    	val fields = objJValue.obj.filter(jField => (formFields ++ hiddenFields) contains jField.name)
+		val fields = objJValue.obj.filter(jField => (formFields ++ hiddenFields) contains jField.name)
     	
 		//set the newRecord's fields to the formFields and hiddenFields of the old object
-    	newRecord.setFieldsFromJValue(JObject(fields)) openOr {
+		newRecord.setFieldsFromJValue(JObject(fields)) openOr {
 			//or if an error occurred, copy the whole object
 			newRecord.setFieldsFromJValue(obj.asJValue)
     	}
     	
     	newRecord
-    }
+	}
 }
