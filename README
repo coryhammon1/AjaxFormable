@@ -20,7 +20,7 @@ class Bulletin extends Record[Bulltin] with AjaxFormable[Bulletin] {
 	override def formFields = List("title", "text")
 
 	override def toXHtml =
-		this.toAjaxForm(Full("Change Bulletin") { bulletin =>
+		this.toAjaxForm(Full("Change Bulletin")) { bulletin =>
 			bulletin.save()
 			Alert("Bulletin was changed successfully.")
 		}
