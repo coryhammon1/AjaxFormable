@@ -1,0 +1,36 @@
+Description:
+
+AjaxFormable is a scala trait that adds ajax form functionality
+to a Lift Record class.
+
+Usage:
+
+Add the trait to your Record and MetaRecord classes, override the
+formFields attribute, and call the toAjaxForm function in the
+appropriate html.
+
+Example:
+
+class Bulletin extends Record[Bulltin] with AjaxFormable[Bulletin] {
+	def meta = Bulletin
+
+	object title extends StringField(this, 64)
+	object text extends TextareaField(this, 256)
+
+	override def formFields = List("title", "text")
+
+	override def toXHtml =
+		this.toAjaxForm(Full("Change Bulletin") { bulletin =>
+			bulletin.save()
+			Alert("Bulletin was changed successfully.")
+		}
+}
+
+object Bulletin extends Bulletin with AjaxFormableMeta[Bulletin] {
+	def getCreationForm =
+		ajaxCreationForm(Full("Add Bulletin")) { bulletin =>
+			bulletin.save()
+			Alert("Bulletin was added successfully.")
+		}
+}
+
