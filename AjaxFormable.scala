@@ -190,8 +190,8 @@ trait AjaxFormableMeta[T <: Record[T]
 		newRecord.setFieldsFromJValue(JObject(fields)) openOr {
 			//or if an error occurred, copy the whole object
 			newRecord.setFieldsFromJValue(obj.asJValue)
-    	}
+		}
     	
-    	newRecord
+		newRecord
 	}
 }
