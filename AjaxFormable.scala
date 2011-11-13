@@ -22,8 +22,8 @@ import JE._
 	A trait that allows a Record to be edited using an automatically generated ajax form.
 */
 trait AjaxFormable[T <: Record[T] with AjaxFormable[T]]
-  extends Record[T] {
-    self: T =>
+	extends Record[T] {
+	self: T =>
 
 	def formFields: List[String]				//the fields of the model that can be edited
 	def hiddenFields: List[String] = Nil		//any hidden fields that should be included in the form
@@ -119,7 +119,7 @@ trait AjaxFormable[T <: Record[T] with AjaxFormable[T]]
 	Trait that provides an ajaxCreationForm function to the Model's MetaRecord object.
 */
 trait AjaxFormableMeta[T <: Record[T]
-  with AjaxFormable[T]] extends MetaRecord[T] {
+	with AjaxFormable[T]] extends MetaRecord[T] {
 	this: MetaRecord[T] with T =>
 
 	def extraClearCreationForm: JsCmd = Noop	//extra command(s) for clearning the ajax form
