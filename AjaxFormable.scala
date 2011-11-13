@@ -25,7 +25,7 @@ trait AjaxFormable[T <: Record[T] with AjaxFormable[T]]
   extends Record[T] {
     self: T =>
 
-    def formFields: List[String]				//the fields of the model that can be edited
+	def formFields: List[String]				//the fields of the model that can be edited
 	def hiddenFields: List[String] = Nil		//any hidden fields that should be included in the form
 	def extraFormFields: List[String] = Nil		//any extra form fields that should be included
 	def extraForm: NodeSeq = NodeSeq.Empty		//the NodeSeq that displays the extra form fields
@@ -35,13 +35,13 @@ trait AjaxFormable[T <: Record[T] with AjaxFormable[T]]
 		
 		@formFields: the fields that should be displayed as html
 	*/
-    def ajaxFormTemplate = (formFields).map({ field: String =>
-        <div>
-        	<label for={field + "_id"}>{field.capitalize}</label>
-            <lift:field name={field}></lift:field>
-            <span id={field + "_id_error"}></span>
-        </div>
-    })
+	def ajaxFormTemplate = (formFields).map({ field: String =>
+		<div>
+			<label for={field + "_id"}>{field.capitalize}</label>
+			<lift:field name={field}></lift:field>
+			<span id={field + "_id_error"}></span>
+		</div>
+	})
 
 	/*
 		Processes the ajax form request.  Returns a JsCmd (javascript command) with either the
@@ -51,16 +51,16 @@ trait AjaxFormable[T <: Record[T] with AjaxFormable[T]]
 		@postSuccess: a function that returns what the browser should do, after the success function is called
 		@formId: the html id of the form being processed
 	*/
-    def ajaxFormProcess(success: T => JsCmd, postSuccess: T => JsCmd, formId: Box[String]): Any = {
-        val errors = this.validate
-        (formFields ++ extraFormFields).foreach({ field: String =>
+	def ajaxFormProcess(success: T => JsCmd, postSuccess: T => JsCmd, formId: Box[String]): Any = {
+		val errors = this.validate
+		(formFields ++ extraFormFields).foreach({ field: String =>
 			//get the text of any errors that occurred when the form was processed
-            val errorText = errors.find { fe: FieldError =>
+			val errorText = errors.find { fe: FieldError =>
 				//if the error's field id is equal to the current field's
 				//id, then this error belongs to that field, so return true
 				(fe.field.uniqueFieldId openOr "") equals field + "_id"
-            } map { _.msg.toString } getOrElse "" //return the error's text or return "", if there is no error
-			
+			} map { _.msg.toString } getOrElse "" //return the error's text or return "", if there is no error
+
 			//convert the error (if there is one) to a JsCmd
 			val error: JsCmd = formId match {
 				case Full(id) => { //if form has an id
@@ -73,28 +73,28 @@ trait AjaxFormable[T <: Record[T] with AjaxFormable[T]]
 				//otherwise, if there is no form id
 				case _ => SetHtml(field + "_id_error", Text(errorText)) //set field's error display to errorText
 			}
-			
+
 			//add the js command to the list of commands the browser should perform
 			S.appendJs(error)
-        })
+		})
 
-        errors match {
+		errors match {
 			//if there is no error
-            case Nil => success(this) & postSuccess(this) //return the results of success and postSuccess
-            case _ => Noop	//do nothing
-        }
-    }
+			case Nil => success(this) & postSuccess(this) //return the results of success and postSuccess
+			case _ => Noop	//do nothing
+		}
+	}
 
 	//Function proxy for ajaxFormProcess, with a default form id value of Empty
 	def ajaxFormProcess(success: T => JsCmd, postSuccess: T => JsCmd): Any =
 		ajaxFormProcess(success, postSuccess, Empty)
-		
-	//Function proxy for ajaxFormProcess, with a default postSuccess value, which does nothing
-    def ajaxFormProcess(success: T => JsCmd, formId: Box[String]): Any =
-    	ajaxFormProcess(success, { obj: T => Noop }, formId)
 
 	//Function proxy for ajaxFormProcess, with a default postSuccess value, which does nothing
-     def ajaxFormProcess(success: T => JsCmd): Any = ajaxFormProcess(success, { obj: T => Noop })
+	def ajaxFormProcess(success: T => JsCmd, formId: Box[String]): Any =
+		ajaxFormProcess(success, { obj: T => Noop }, formId)
+
+	//Function proxy for ajaxFormProcess, with a default postSuccess value, which does nothing
+	def ajaxFormProcess(success: T => JsCmd): Any = ajaxFormProcess(success, { obj: T => Noop })
 
 	/*
 		Returns the model's ajax form as html.
@@ -102,17 +102,17 @@ trait AjaxFormable[T <: Record[T] with AjaxFormable[T]]
 		@button: the string value that should be displayed in the submit button
 		@success: a function that returns what the browser should do on successful processing 
 	*/
-    def toAjaxForm(button: Box[String])(success: T => JsCmd): NodeSeq = {
-    	val formId = Helpers.nextFuncName		//randomly generated formId
-		
-    	<div id={formId}>{
+	def toAjaxForm(button: Box[String])(success: T => JsCmd): NodeSeq = {
+		val formId = Helpers.nextFuncName		//randomly generated formId
+
+		<div id={formId}>{
 			extraForm ++ SHtml.ajaxForm(
 				meta.toForm(this, ajaxFormTemplate) ++							//display the form template
 				SHtml.hidden(() => ajaxFormProcess(success, Full(formId))) ++	//process the ajax form using ajaxFormProcess	
 				<input type="submit" value={button openOr "Submit"} />			//the submit button
 			)
-    	}</div>
-    }
+		}</div>
+	}
 }
 
 /*
@@ -120,7 +120,7 @@ trait AjaxFormable[T <: Record[T] with AjaxFormable[T]]
 */
 trait AjaxFormableMeta[T <: Record[T]
   with AjaxFormable[T]] extends MetaRecord[T] {
-    this: MetaRecord[T] with T =>
+	this: MetaRecord[T] with T =>
 
 	def extraClearCreationForm: JsCmd = Noop	//extra command(s) for clearning the ajax form
 
@@ -131,7 +131,7 @@ trait AjaxFormableMeta[T <: Record[T]
 		@success: function that should return what the browser should do on success
 	*/
     def ajaxCreationForm(button: Box[String])(success: T => JsCmd): NodeSeq = {
-        val obj = createRecord
+		val obj = createRecord
 		val formId = Helpers.nextFuncName		//randomly generated
 
 		/*
@@ -172,8 +172,8 @@ trait AjaxFormableMeta[T <: Record[T]
 				}) ++
 				<input type="submit" value={button openOr "Submit"} />
 			)
-        }</div>
-    }
+		}</div>
+	}
     
 	/*
 		Return a new model with only the model's form fields copied
